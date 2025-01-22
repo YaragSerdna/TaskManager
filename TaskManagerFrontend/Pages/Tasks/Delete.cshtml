@@ -1,0 +1,14 @@
+﻿@page "{id:int}"
+@model DeleteModel
+
+<h2>Eliminar Tarea</h2>
+<p>¿Está seguro de que desea eliminar la siguiente tarea?</p>
+
+<p><strong>Título:</strong> @Model.Task.Title</p>
+<p><strong>Descripción:</strong> @Model.Task.Description</p>
+<p><strong>Estado:</strong> @Model.Task.Status</p>
+
+<form method="post">
+    <button type="submit" class="btn btn-danger">Eliminar</button>
+    <a asp-page="/Tasks/Index" class="btn btn-secondary">Cancelar</a>
+</form>

@@ -1,0 +1,26 @@
+﻿@page
+@model IndexModel
+<h2>Lista de Usuarios</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Email</th>
+            <th>Rol</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in Model.Users)
+        {
+            <tr>
+                <td>@user.Name</td>
+                <td>@user.Email</td>
+                <td>@user.Role</td>
+                <td>
+                    <a asp-page="/Users/View" asp-route-id="@user.Id" class="btn btn-info btn-sm">Ver</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

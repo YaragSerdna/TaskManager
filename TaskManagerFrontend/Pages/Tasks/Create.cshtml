@@ -1,0 +1,24 @@
+﻿@page
+@model CreateModel
+<h2>Crear Tarea</h2>
+
+<form method="post">
+    <div class="mb-3">
+        <label for="title" class="form-label">Título</label>
+        <input type="text" id="title" name="Title" class="form-control" asp-for="Title" required />
+        <span asp-validation-for="Title" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label for="description" class="form-label">Descripción</label>
+        <textarea id="description" name="Description" class="form-control" asp-for="Description"></textarea>
+    </div>
+    <div class="mb-3">
+        <label for="status" class="form-label">Estado</label>
+        <select id="status" name="Status" class="form-control" asp-for="Status">
+            <option value="Pendiente">Pendiente</option>
+            <option value="En Progreso">En Progreso</option>
+            <option value="Completada">Completada</option>
+        </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Crear</button>
+</form>

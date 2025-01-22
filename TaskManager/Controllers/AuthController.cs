@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Identity.Data;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TaskManager.Data;
 using TaskManager.Helpers;
@@ -29,14 +30,24 @@ namespace TaskManager.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> Login(string email, string password)
+        public async Task<IActionResult> Login([FromBody] LoginRequest request)
         {
-            var user = await _context.Users.SingleOrDefaultAsync(u => u.Email == email);
-            if (user == null || !VerifyPassword(user.Password, password))
-                return Unauthorized();
+            if (request == null || string.IsNullOrEmpty(request.Email) || string.IsNullOrEmpty(request.Password))
+            {
+                return BadRequest(new { message = "Los datos de inicio de sesión son inválidos." });
+            }
 
-            var token = _jwtHelper.GenerateToken(user.Id.ToString(), user.Role);
-            return Ok(new { token });
+            // Buscar al usuario por correo electrónico
+            var user = await _context.Users.SingleOrDefaultAsync(u => u.Email == request.Email);
+            if (user == null)
+                return Unauthorized(new { message = "Usuario no encontrado" });
+
+            // Verificar la contraseña
+            if (!VerifyPassword(user.Password, request.Password))
+                return Unauthorized(new { message = "Contraseña incorrecta" });
+
+            // Generar un token JWT si la contraseña es válida
+            return Ok(new { token = _jwtHelper.GenerateToken(user.Id.ToString(), user.Role) });
         }
 
         private string HashPassword(string password)
@@ -55,10 +66,29 @@ namespace TaskManager.Controllers
                 return hashString;
             }
         }
-        private bool VerifyPassword(string hashedPassword, string inputPassword)
+        private bool VerifyPassword(string hash, string password)
         {
-            var inputHash = HashPassword(inputPassword);
-            return inputHash == hashedPassword;
+            // Hashear la contraseña ingresada por el usuario
+            var hashedInputPassword = HashPassword(password);
+
+            // Comparar el hash ingresado con el hash almacenado
+            return SecureEquals(hashedInputPassword, hash);
+        }
+
+        //Protección contra Ataques de Timing
+        private bool SecureEquals(string a, string b)
+        {
+            //Comparar el tamaño de las cadenas
+            if (a.Length != b.Length)
+                return false;
+
+            //Comparar las cadenas por caracteres
+            var result = true;
+            for (int i = 0; i < a.Length; i++)
+            {
+                result &= a[i] == b[i];
+            }
+            return result;
         }
     }
 }

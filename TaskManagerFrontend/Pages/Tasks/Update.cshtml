@@ -1,0 +1,30 @@
+﻿@page "{id:int}"
+@model UpdateModel
+<h2>Editar Tarea</h2>
+
+<!-- Mensaje de error general -->
+@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+{
+    <div class="alert alert-danger">@Model.ErrorMessage</div>
+}
+<form method="post">
+    <input type="hidden" asp-for="Id" />
+    <div class="mb-3">
+        <label for="title" class="form-label">Título</label>
+        <input type="text" id="title" name="Title" class="form-control" asp-for="Title" required />
+        <span asp-validation-for="Title" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label for="description" class="form-label">Descripción</label>
+        <textarea id="description" name="Description" class="form-control" asp-for="Description"></textarea>
+    </div>
+    <div class="mb-3">
+        <label for="status" class="form-label">Estado</label>
+        <select id="status" name="Status" class="form-control" asp-for="Status">
+            <option value="Pending">Pendiente</option>
+            <option value="In Progress">En Progreso</option>
+            <option value="Completed">Completada</option>
+        </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Actualizar</button>
+</form>

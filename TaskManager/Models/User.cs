@@ -7,5 +7,7 @@
         public string Email { get; set; }
         public string Password { get; set; } // Hashed
         public string Role { get; set; } // Admin, User
+        public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
     }
 }

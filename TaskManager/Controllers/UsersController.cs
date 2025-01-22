@@ -5,9 +5,9 @@ using TaskManager.Data;
 
 namespace TaskManager.Controllers
 {
-    [Authorize(Roles = "Admin")]
-    [Route("api/users")]
-    [ApiController]
+    [Route("api/users")] 
+    [ApiController] 
+    //[Authorize(Roles = "Admin")] // Solo accesible para administradores
     public class UsersController : ControllerBase
     {
 
@@ -22,15 +22,33 @@ namespace TaskManager.Controllers
         [HttpGet]
         public async Task<IActionResult> GetUsers()
         {
-            var users = await _context.Users.ToListAsync();
+            var users = await _context.Users
+                .Select(user => new
+                {
+                    user.Id,
+                    user.Name,
+                    user.Email,
+                    user.Role
+                })
+                .ToListAsync();
+
             return Ok(users);
         }
 
-        // Obtener un usuario específica por ID
+        // Obtener un usuario específico por ID
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetUser(int id)
+        public async Task<IActionResult> GetUserById(int id)
         {
-            var user = await _context.Users.FindAsync(id);
+            var user = await _context.Users
+                .Select(user => new
+                {
+                    user.Id,
+                    user.Name,
+                    user.Email,
+                    user.Role
+                })
+                .FirstOrDefaultAsync(u => u.Id == id);
+
             if (user == null)
                 return NotFound(new { message = "Usuario no encontrado" });
 
